@@ -28,6 +28,7 @@ const Home = () => {
       },
     ];
     setSlidesData(newSlidesData);
+    setRowPopup(false);
   };
   const [imageList, setImageList] = useState([null, null, null]);
 
@@ -318,7 +319,7 @@ const Home = () => {
                 id={`panel${slide.id}a-header`}
               >
                 <Typography>
-                  {slide.Heading
+                  {slide.Heading && slide.PropertyType
                     ? `${slide.Heading} - ${slide.PropertyType}`
                     : `Property ${index + 1}`}
                 </Typography>

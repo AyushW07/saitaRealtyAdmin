@@ -6,14 +6,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Modal from "@mui/material/Modal";
 
 const Namepopups = ({ open, onClose, onAdd }) => {
-  //   const [toggleSwitch, setToggleSwitch] = useState(false);
-  const [togglePop, setTogglePop] = useState(false);
   const [propertyName, setPropertyName] = useState("");
   const [propertyType, setPropertyType] = useState("");
 
   const propertyTypes = ["Residential", "Commercial", "Land", "Other"];
   const handleAdd = () => {
-    // Pass the new property data back to the parent component
     onAdd({
       propertyName,
       propertyType,
@@ -24,11 +21,10 @@ const Namepopups = ({ open, onClose, onAdd }) => {
     onClose();
   };
   //   const handleOpen = () => setTogglePop(true);
-  const handleClose = () => setTogglePop(false);
+  const handleClose = () => onClose();
 
   return (
     <>
-      {/* <Button onClick={handleOpen}>Open Pop-up</Button> */}
       <Modal
         open={open}
         onClose={onClose}
