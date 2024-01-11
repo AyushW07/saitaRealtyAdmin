@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Accordion from "@mui/material/Accordion";
 import Namepopups from "../component/namePopups";
 import { MdAdd, MdCancel } from "react-icons/md";
-
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
@@ -13,7 +12,6 @@ import { API_BASE_URL } from "../../src/config";
 import { SaveChangesPopup } from "../component/Buttons/savePopup";
 import SaveButton from "../component/Buttons/saveButton";
 import { toast } from "react-toastify";
-
 import { AiOutlinePlus } from "react-icons/ai";
 import PublishButton from "./publish/publishButton";
 
@@ -143,6 +141,7 @@ const Home = () => {
       )
     );
   };
+
   const handlePriceChange = (slideId, value) => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
@@ -224,9 +223,13 @@ const Home = () => {
   const [rowPopup, setRowPopup] = useState(false);
   const [activeSlideId, setActiveSlideId] = useState(null);
 
+  useEffect(() => {
+    setRowPopup(true);
+  }, []);
+
   const handleAddRow = async () => {
     setRowPopup(true);
-    await addRow();
+    // await addRow();
   };
   async function addRow() {
     setSlidesData((prevSlidesData) => [
@@ -265,13 +268,23 @@ const Home = () => {
       await handleSwitch(activeSlideId);
     }
   };
-  const onCancel = () => {};
 
   const [expanded, setExpanded] = useState("panel1");
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
+
+  const handleDeleteAccord = (id) => {
+    const updatedSlidesData = slidesData.filter((slide) => slide.id !== id);
+    setSlidesData(updatedSlidesData);
+
+    if (expanded === `panel${id}`) {
+      setExpanded(null);
+    }
+  };
+
+  console.log("slidesData:", slidesData);
 
   return (
     <>
@@ -295,10 +308,11 @@ const Home = () => {
           </span>
         </p>
       </div>
+
       <div className="flex flex-col ">
         {slidesData.map((slide, index) => (
           <div
-            className="flex lg:ml-2 2xl:w-[900px]  lg:w-[600px] my-2 rounded-3xl"
+            className="flex lg:ml-2 2xl:w-[900px] lg:w-[600px] my-2 rounded-3xl"
             key={slide.id}
           >
             <SaveChangesPopup
@@ -307,13 +321,14 @@ const Home = () => {
               onClose={closePopUp}
             />
 
+            {/* {!rowPopup && ( */}
             <Accordion
               key={slide.id}
               expanded={expanded === `panel${slide.id}`}
               onChange={handleChange(`panel${slide.id}`)}
             >
               <AccordionSummary
-                className="text-base  text-opacity-60 font-base text-[#2C2C2C]"
+                className="text-base text-opacity-60 font-base text-[#2C2C2C]"
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${slide.id}a-content`}
                 id={`panel${slide.id}a-header`}
@@ -328,7 +343,6 @@ const Home = () => {
                     isPublished={toggleSwitch[slide.id]}
                     openPopUp={() => openPopUp(slide.id)}
                     slideId={slide.id}
-                    className=""
                   />
                 </span>
               </AccordionSummary>
@@ -344,9 +358,9 @@ const Home = () => {
                         </div>
                         <div>
                           <textarea
-                            className=" text-[12px] border border-1 border-[#0000003B] px-2 py-2 rounded  lg:text-[12px] font-semibold text-[#1A233899]  lg:w-[344px]  lg:h-[107px]"
+                            className=" text-[12px] border border-1 border-[#0000003B] px-2 py-2 rounded  lg:text-[12px] font-semibold text-[#1A233899] lg:w-[344px] lg:h-[117px]"
                             value={slide.Description}
-                            placeholder="Type Description ...."
+                            placeholder="Type Description.."
                             name="chapterDescription"
                             onChange={(e) =>
                               handleDescriptionChange(slide?.id, e.target.value)
@@ -367,23 +381,47 @@ const Home = () => {
                             Choose currency/ Price
                           </label>
                         </div>
-                        <div className="flex space-x-2 pl-[1rem]">
+                        <div className="flex space-x-2 pl-[1rem] pb-4">
                           <input
-                            type="text"
-                            className=" text-[12px]    border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
-                            value={slide.Price}
-                            placeholder="د.إ "
-                            name="Heading"
-                            onChange={(e) =>
-                              handlePriceChange(slide?.id, e.target.value)
-                            }
+                            // type="text"
+                            disabled
+                            className=" text-[12px] border border-1 border-[#0000003B] text-center px-2 py-2 w-[41px] h-[56px] rounded"
+                            // value={slide.Price}
+                            placeholder="د.إ"
+                            // name="Heading"
+                            // onChange={(e) =>
+                            //   handlePriceChange(slide?.id, e.target.value)
+                            // }
                           />
-                          <input
+                          {/* <input
                             type="text"
                             className=" text-[12px]    border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
                             // value={slide.Price}
                             placeholder="$"
                             name="Heading"
+                            // onChange={(e) =>
+                            //   handlePriceChange(slide?.id, e.target.value)
+                            // }
+                          /> */}
+                          <input
+                            type="text"
+                            className=" text-[12px] lg:w-[8rem]   border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
+                            // value={slide.Price}
+                            placeholder="Type price here.."
+                            name="Heading"
+                            // onChange={(e) =>
+                            //   handlePriceChange(slide?.id, e.target.value)
+                            // }
+                          />
+                        </div>
+                        <div className="flex space-x-2 pl-[1rem]">
+                          <input
+                            // type="text"
+                            disabled
+                            className=" text-[12px] border border-1 border-[#0000003B] text-center px-2 py-2 w-[41px] h-[56px]  rounded"
+                            // value={slide.Price}
+                            placeholder="$"
+                            // name="Heading"
                             // onChange={(e) =>
                             //   handlePriceChange(slide?.id, e.target.value)
                             // }
@@ -464,11 +502,11 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <p className=" text-lg font-medium text-[#1A2338B2]">
+                    <label className=" text-lg font-medium text-[#1A2338B2]">
                       Key Features and Amenities
-                    </p>
+                    </label>
                     <div
-                      className="pl-[1rem] flex flex-col space-y-2   rounded-lg   bg-[#FFFFFF] w-[300px] h-[478px]"
+                      className="pl-[1rem] flex flex-col space-y-2 rounded-lg  bg-[#FFFFFF] w-[300px] h-[478px]"
                       style={{ border: "2px solid #D9D9D9" }}
                     >
                       <div className="pt-[2rem] ">
@@ -476,18 +514,33 @@ const Home = () => {
                           <input
                             key={index}
                             type="text"
-                            placeholder="Type features here...."
+                            placeholder="Type features here.."
                             value={feature}
                             onChange={(event) =>
                               handleFeatureChange(index, event, slide.id)
                             }
-                            className="  border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px]    rounded"
+                            className="  border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
                           />
                         ))}
+
+                        {/* {features.map((feature, index) => (
+                          <input
+                            key={`${slide.id}-${index}`}
+                            id={`${slide.id}-${index}`}
+                            type="text"
+                            placeholder="Type features here.."
+                            value={feature}
+                            onChange={(event) =>
+                              handleFeatureChange(slide?.id, index, event)
+                              // handleFeatureChange(index, event, slide?.id)
+                            }
+                            className="border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
+                          />
+                        ))} */}
                       </div>
                       <div className="flex justify-center">
                         <button
-                          className=" border border-1 border-[#0000003B] px-2 py-2  w-[270px] h-[56px] rounded"
+                          className="border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
                           onClick={addFeature}
                         >
                           <AiOutlinePlus />
@@ -562,15 +615,16 @@ const Home = () => {
                 <div className="flex self-end">
                   <SaveButton
                     onSave={() => saveFeePrograms(slide.id)}
-                    onCancel={onCancel}
+                    onCancel={() => handleDeleteAccord(slide.id)}
                   />
                 </div>
               </AccordionDetails>
             </Accordion>
+            {/* )} */}
           </div>
         ))}
         <button
-          className="flex self-center px-6 py-3 border-2 border-gray-500 rounded-lg"
+          className="flex self-center px-6 py-3 border-2 border-gray-500 rounded-lg mb-8 mt-4"
           onClick={handleAddRow}
         >
           ADD ROW +
