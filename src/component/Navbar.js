@@ -1,9 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { MdCall } from "react-icons/md";
 const Navbar = () => {
   const [toggleColor, setToggleColor] = useState();
+
+  useEffect(() => {
+    setToggleColor("Home");
+  }, []);
+
   return (
     <>
       <div
@@ -19,20 +24,20 @@ const Navbar = () => {
             />
           </div>
         </div>
-        <ul className="flex flex-col">
+        <ul className="flex flex-col text-white">
           <li className="flex flex-row items-center">
             <Link
               to="/Home"
               onClick={() => setToggleColor("Home")}
               className={`flex items-center w-full h-[48px] mt-10 ${
                 toggleColor === "Home"
-                  ? "bg-gradient-to-r from-[#3CBBA4] to-[#C1F430] shadow-[0px_4px_11.6px_0px_rgba(0,0,0,0.25)]"
+                  ? "bg-gradient-to-r from-[#3CBBA4] to-[#C1F430] text-black shadow-[0px_4px_11.6px_0px_rgba(0,0,0,0.25)]"
                   : ""
               }`}
             >
-              <AiOutlineHome className="w-[30px] h-[30px] text-black ml-[1rem]" />
+              <AiOutlineHome className="w-[25px] h-[25px] ml-[1rem]" />
               <h1
-                className="lg:ml-[10px] text-black 2xl:text-lg !text-sm font-medium"
+                className="lg:ml-[10px] 2xl:text-lg !text-sm font-medium"
                 style={{ lineHeight: "15px" }}
               >
                 Home Page
@@ -45,13 +50,13 @@ const Navbar = () => {
               onClick={() => setToggleColor("Maincontact")}
               className={`flex items-center w-full h-[48px] mt-10 ${
                 toggleColor === "Maincontact"
-                  ? "bg-gradient-to-r from-[#3CBBA4] to-[#C1F430] shadow-[0px_4px_11.6px_0px_rgba(0,0,0,0.25)]"
+                  ? "bg-gradient-to-r from-[#3CBBA4] to-[#C1F430] text-black shadow-[0px_4px_11.6px_0px_rgba(0,0,0,0.25)]"
                   : ""
               }`}
             >
-              <MdCall className="w-[30px] h-[30px] text-black ml-[1rem]" />
+              <MdCall className="w-[25px] h-[25px] ml-[1rem]" />
               <h1
-                className="lg:ml-[10px] text-black 2xl:text-lg !text-sm font-medium"
+                className="lg:ml-[10px] 2xl:text-lg !text-sm font-medium"
                 style={{ lineHeight: "15px" }}
               >
                 Enquires

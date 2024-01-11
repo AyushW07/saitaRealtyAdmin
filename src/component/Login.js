@@ -8,6 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useLoginStore();
+  
   async function Loginfunction() {
     try {
       const config = {
@@ -63,7 +64,7 @@ const Login = () => {
                 for="password"
                 className="block text-sm font-semibold text-white"
               >
-                password
+                Password
               </label>
               <input
                 onChange={(e) => setPassword(e.target.value)}
