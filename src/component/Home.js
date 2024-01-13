@@ -16,6 +16,8 @@ import { AiOutlinePlus } from "react-icons/ai";
 import PublishButton from "./publish/publishButton";
 
 const Home = () => {
+  const [toggleSwitch, setToggleSwitch] = React.useState({});
+  const [locations, setLocations] = useState([""]);
   const handleAddProperty = (propertyData) => {
     const newSlidesData = [
       ...slidesData,
@@ -74,16 +76,27 @@ const Home = () => {
     );
   };
 
-  const [toggleSwitch, setToggleSwitch] = React.useState({});
+  const handleLocation = (index, value) => {
+    const newLocations = [...locations];
+    newLocations[index] = value;
+    setLocations(newLocations);
+  };
+
+  // Function to add a new location input field
+  const addLocationField = () => {
+    setLocations([...locations, ""]);
+  };
 
   const [slidesData, setSlidesData] = useState([
     {
       id: 1,
-      Location: "",
+      Location: [""],
       Description: "",
-      Photos: [],
+      Photos: [""],
       Price: "",
-      Key: [],
+      propertyName: "",
+      Dollar: "",
+      Key: [""],
       Bedrooms: "",
       Bathrooms: "",
       Area: "",
@@ -92,7 +105,12 @@ const Home = () => {
   ]);
   const getFeePrograms = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/V1/gethomeData`);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_BASE_URL}/V1/gethomeData`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log("res", response?.data?.data);
       // const fetchedData = response.data.data;
       const initialSwitchState = {};
@@ -112,28 +130,11 @@ const Home = () => {
     }
   };
   useEffect(() => {
-    getFeePrograms();
+    if (localStorage.getItem("token")) {
+      getFeePrograms();
+    }
   }, []);
 
-  // const handleAddRow = () => {
-  //   setSlidesData((prevSlidesData) => [
-  //     ...prevSlidesData,
-  //     {
-  //       id: prevSlidesData.length + 1,
-  //       Description: "",
-  //       Photos: "",
-  //       Location: "",
-  //       Published: false,
-  //     },
-  //   ]);
-  // };
-  const handleLocation = (slideId, value) => {
-    setSlidesData((prevSlidesData) =>
-      prevSlidesData.map((slide) =>
-        slide.id === slideId ? { ...slide, Location: value } : slide
-      )
-    );
-  };
   const handleDescriptionChange = (slideId, value) => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
@@ -146,6 +147,14 @@ const Home = () => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
         slide.id === slideId ? { ...slide, Price: value } : slide
+      )
+    );
+  };
+
+  const handleDollarChange = (slideId, value) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) =>
+        slide.id === slideId ? { ...slide, Dollar: value } : slide
       )
     );
   };
@@ -236,11 +245,13 @@ const Home = () => {
       ...prevSlidesData,
       {
         id: prevSlidesData.length + 1,
-        Location: "",
+        Location: [""],
         Description: "",
-        Photos: [],
+        Photos: [""],
         Price: "",
-        Key: [],
+        Dollar: "",
+        propertyName: "",
+        Key: [""],
         Bedrooms: "",
         Bathrooms: "",
         Area: "",
@@ -284,7 +295,7 @@ const Home = () => {
     }
   };
 
-  console.log("slidesData:", slidesData);
+  // console.log("slidesData:", slidesData);
 
   return (
     <>
@@ -383,76 +394,64 @@ const Home = () => {
                         </div>
                         <div className="flex space-x-2 pl-[1rem] pb-4">
                           <input
-                            // type="text"
                             disabled
                             className=" text-[12px] border border-1 border-[#0000003B] text-center px-2 py-2 w-[41px] h-[56px] rounded"
-                            // value={slide.Price}
                             placeholder="د.إ"
-                            // name="Heading"
-                            // onChange={(e) =>
-                            //   handlePriceChange(slide?.id, e.target.value)
-                            // }
                           />
-                          {/* <input
-                            type="text"
-                            className=" text-[12px]    border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
-                            // value={slide.Price}
-                            placeholder="$"
-                            name="Heading"
-                            // onChange={(e) =>
-                            //   handlePriceChange(slide?.id, e.target.value)
-                            // }
-                          /> */}
                           <input
                             type="text"
                             className=" text-[12px] lg:w-[8rem]   border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
-                            // value={slide.Price}
+                            value={slide.Price}
                             placeholder="Type price here.."
                             name="Heading"
-                            // onChange={(e) =>
-                            //   handlePriceChange(slide?.id, e.target.value)
-                            // }
+                            onChange={(e) =>
+                              handlePriceChange(slide?.id, e.target.value)
+                            }
                           />
                         </div>
                         <div className="flex space-x-2 pl-[1rem]">
                           <input
-                            // type="text"
                             disabled
                             className=" text-[12px] border border-1 border-[#0000003B] text-center px-2 py-2 w-[41px] h-[56px]  rounded"
-                            // value={slide.Price}
                             placeholder="$"
-                            // name="Heading"
-                            // onChange={(e) =>
-                            //   handlePriceChange(slide?.id, e.target.value)
-                            // }
                           />
                           <input
                             type="text"
                             className=" text-[12px] lg:w-[8rem]   border border-1 border-[#0000003B] px-2 py-2 w-[41px] h-[56px]  rounded"
-                            // value={slide.Price}
+                            value={slide.Dollar}
                             placeholder="Type price here.."
                             name="Heading"
-                            // onChange={(e) =>
-                            //   handlePriceChange(slide?.id, e.target.value)
-                            // }
+                            onChange={(e) =>
+                              handleDollarChange(slide?.id, e.target.value)
+                            }
                           />
                         </div>
                       </div>
                     </div>
 
-                    <label className=" 2xl:[14px] mt-4 font-semibold text-[#1A233899]">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      className=" text-[12px]    border border-1 border-[#0000003B] px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px]  rounded"
-                      value={slide.Location}
-                      placeholder="Type location here.."
-                      name=""
-                      onChange={(e) =>
-                        handleLocation(slide?.id, e.target.value)
-                      }
-                    />
+                    <div>
+                      <label className="2xl:[14px] mt-4 font-semibold text-[#1A233899]">
+                        Location
+                      </label>
+                      {locations.map((location, index) => (
+                        <div key={index}>
+                          <input
+                            id={`id${index}${slide?.id}`}
+                            type="text"
+                            className="text-[12px] border border-1 border-[#0000003B] px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                            value={location}
+                            placeholder="Type location here.."
+                            onChange={(e) =>
+                              handleLocation(
+                                `id${index}${slide?.id}`,
+                                e.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      ))}
+                      <button onClick={addLocationField}>+ Add Location</button>
+                    </div>
                     <div className="flex flex-row mt-8 space-x-4 ">
                       <div className="flex flex-col">
                         <label className="] 2xl:[14px]  font-semibold text-[#1A233899]">
@@ -624,7 +623,7 @@ const Home = () => {
           </div>
         ))}
         <button
-          className="flex self-center px-6 py-3 border-2 border-gray-500 rounded-lg mb-8 mt-4"
+          className="flex self-center px-6 py-3 mt-4 mb-8 border-2 border-gray-500 rounded-lg"
           onClick={handleAddRow}
         >
           ADD ROW +

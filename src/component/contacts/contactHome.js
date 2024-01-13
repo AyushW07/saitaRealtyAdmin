@@ -81,7 +81,13 @@ const Contacthome = () => {
   }
   const getContactData = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/V1/getDatacontact`);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`${API_BASE_URL}/V1/getDatacontact`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       setEmail(response.data.data?.Email);
       setReEnterEmail(response.data.data?.Email);
       setToggleSwitch(response.data.data?.Published);
@@ -90,7 +96,9 @@ const Contacthome = () => {
     }
   };
   useEffect(() => {
-    getContactData();
+    if (localStorage.getItem("token")) {
+      getContactData();
+    }
   }, []);
 
   const handleCancel = () => {
