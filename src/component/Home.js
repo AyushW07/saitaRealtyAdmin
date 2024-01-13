@@ -17,32 +17,70 @@ import PublishButton from "./publish/publishButton";
 
 const Home = () => {
   const [toggleSwitch, setToggleSwitch] = React.useState({});
-  const [locations, setLocations] = useState([""]);
+  const [togglePop, setTogglePop] = useState(false);
+  const [rowPopup, setRowPopup] = useState(false);
+  const [activeSlideId, setActiveSlideId] = useState(null);
+  // const [locations, setLocations] = useState([]);
+  // const [imageList, setImageList] = useState([null, null, null]);
+  const [expanded, setExpanded] = useState("panel1");
+
+  const [slidesData, setSlidesData] = useState([
+    {
+      id: "",
+      Location: [],
+      Description: "",
+      Photos: [],
+      Price: "",
+      propertyName: "",
+      Dollar: "",
+      Key: [],
+      Bedrooms: "",
+      Bathrooms: "",
+      Area: "",
+      Published: false,
+    },
+  ]);
+  // const [slidesData, setSlidesData] = useState([]);
+
   const handleAddProperty = (propertyData) => {
-    const newSlidesData = [
-      ...slidesData,
-      {
-        id: slidesData.length + 1,
-        Heading: propertyData.propertyName, // This will be the slide's name
-        PropertyType: propertyData.propertyType, // Corrected reference to propertyType
-      },
-    ];
+    const newSlide = {
+      id: slidesData.length + 1, // Ensure this generates a unique ID
+      Heading: propertyData.propertyName, // Slide's name
+      PropertyType: propertyData.propertyType, // Property Type
+      Location: [],
+      Description: "",
+      Photos: [],
+      Price: "",
+      propertyName: "",
+      Dollar: "",
+      Key: [],
+      Bedrooms: "",
+      Bathrooms: "",
+      Area: "",
+      Published: false,
+      // Features: [],
+    };
+
+    const newSlidesData = [...slidesData, newSlide];
     setSlidesData(newSlidesData);
     setRowPopup(false);
   };
-  const [imageList, setImageList] = useState([null, null, null]);
 
   const handleImageChange = (index, e, slideId) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const newImageList = [...imageList];
-        newImageList[index] = reader.result;
-        setImageList(newImageList);
         setSlidesData((prevSlidesData) =>
           prevSlidesData.map((slide) =>
-            slide.id === slideId ? { ...slide, Photos: newImageList } : slide
+            slide.id === slideId
+              ? {
+                  ...slide,
+                  Photos: slide.Photos.map((photo, photoIndex) =>
+                    photoIndex === index ? reader.result : photo
+                  ),
+                }
+              : slide
           )
         );
       };
@@ -50,59 +88,83 @@ const Home = () => {
     }
   };
 
-  const addImageBox = () => {
-    setImageList([...imageList, null]);
-  };
-
-  const removeImageBox = (index) => {
-    const newImageList = [...imageList];
-    newImageList.splice(index, 1);
-    setImageList(newImageList);
-  };
-  const [features, setFeatures] = useState([""]);
-
-  const addFeature = () => {
-    setFeatures([...features, ""]);
-  };
-
-  const handleFeatureChange = (index, event, slideId) => {
-    const newFeatures = [...features];
-    newFeatures[index] = event.target.value;
-    setFeatures(newFeatures);
+  const addImageBox = (slideId) => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
-        slide.id === slideId ? { ...slide, Key: newFeatures } : slide
+        slide.id === slideId
+          ? { ...slide, Photos: [...slide.Photos, ""] }
+          : slide
       )
     );
   };
 
-  const handleLocation = (index, value) => {
-    const newLocations = [...locations];
-    newLocations[index] = value;
-    setLocations(newLocations);
+  const removeImageBox = (slideId, index) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) =>
+        slide.id === slideId
+          ? {
+              ...slide,
+              Photos: slide.Photos.filter(
+                (_, photoIndex) => photoIndex !== index
+              ),
+            }
+          : slide
+      )
+    );
   };
 
-  // Function to add a new location input field
-  const addLocationField = () => {
-    setLocations([...locations, ""]);
+  const addFeature = (slideId) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) => {
+        if (slide.id === slideId) {
+          return { ...slide, Key: [...slide.Key, ""] };
+        } else {
+          return slide;
+        }
+      })
+    );
   };
 
-  const [slidesData, setSlidesData] = useState([
-    {
-      id: 1,
-      Location: [""],
-      Description: "",
-      Photos: [""],
-      Price: "",
-      propertyName: "",
-      Dollar: "",
-      Key: [""],
-      Bedrooms: "",
-      Bathrooms: "",
-      Area: "",
-      Published: false,
-    },
-  ]);
+  const handleFeatureChange = (slideId, featureIndex, newValue) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) =>
+        slide.id === slideId
+          ? {
+              ...slide,
+              Key: slide.Key.map((feature, index) =>
+                index === featureIndex ? newValue : feature
+              ),
+            }
+          : slide
+      )
+    );
+  };
+
+  const handleLocation = (slideId, locationIndex, newValue) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) =>
+        slide.id === slideId
+          ? {
+              ...slide,
+              Location: slide.Location.map((loc, index) =>
+                index === locationIndex ? newValue : loc
+              ),
+            }
+          : slide
+      )
+    );
+  };
+
+  const addLocationField = (slideId) => {
+    setSlidesData((prevSlidesData) =>
+      prevSlidesData.map((slide) =>
+        slide.id === slideId
+          ? { ...slide, Location: [...slide.Location, ""] }
+          : slide
+      )
+    );
+  };
+
   const getFeePrograms = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -111,24 +173,29 @@ const Home = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+
       console.log("res", response?.data?.data);
-      // const fetchedData = response.data.data;
-      const initialSwitchState = {};
-      // fetchedData.forEach((slide) => {
-      //   initialSwitchState[slide.id] = slide.Published;
-      // });
       const data = response.data.data;
+
       if (Array.isArray(data) && data.length > 0) {
+        // Update slidesData with the fetched data
         setSlidesData(data);
       } else {
-        const defaultData = [{ id: "1", Photos: "" }];
-        setSlidesData(defaultData);
+        // If no data is fetched, keep slidesData as an empty array
+        setSlidesData([]);
       }
+
+      // Initialize toggleSwitch state based on fetched data
+      const initialSwitchState = {};
+      data.forEach((slide) => {
+        initialSwitchState[slide.id] = slide.Published;
+      });
       setToggleSwitch(initialSwitchState);
     } catch (e) {
       console.log("err", e);
     }
   };
+
   useEffect(() => {
     if (localStorage.getItem("token")) {
       getFeePrograms();
@@ -227,38 +294,11 @@ const Home = () => {
       console.log("Error:", e);
     }
   };
-
-  const [togglePop, setTogglePop] = useState(false);
-  const [rowPopup, setRowPopup] = useState(false);
-  const [activeSlideId, setActiveSlideId] = useState(null);
-
-  useEffect(() => {
-    setRowPopup(true);
-  }, []);
-
   const handleAddRow = async () => {
     setRowPopup(true);
     // await addRow();
   };
-  async function addRow() {
-    setSlidesData((prevSlidesData) => [
-      ...prevSlidesData,
-      {
-        id: prevSlidesData.length + 1,
-        Location: [""],
-        Description: "",
-        Photos: [""],
-        Price: "",
-        Dollar: "",
-        propertyName: "",
-        Key: [""],
-        Bedrooms: "",
-        Bathrooms: "",
-        Area: "",
-        Published: false,
-      },
-    ]);
-  }
+
   const openPopUp = (slideId) => {
     setActiveSlideId(slideId); // Set the slide ID that is being edited
     setTogglePop(true);
@@ -280,8 +320,6 @@ const Home = () => {
     }
   };
 
-  const [expanded, setExpanded] = useState("panel1");
-
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
@@ -295,7 +333,13 @@ const Home = () => {
     }
   };
 
-  // console.log("slidesData:", slidesData);
+  useEffect(() => {
+    setRowPopup(true);
+  }, []);
+
+  useEffect(() => {
+    console.log("slidedata", slidesData);
+  }, [slidesData]);
 
   return (
     <>
@@ -324,8 +368,9 @@ const Home = () => {
         {slidesData.map((slide, index) => (
           <div
             className="flex lg:ml-2 2xl:w-[900px] lg:w-[600px] my-2 rounded-3xl"
-            key={slide.id}
+            key={slide?.id || index}
           >
+            {console.log("test", slide?.Key)}
             <SaveChangesPopup
               open={togglePop}
               onSave={onSaveChanges}
@@ -335,13 +380,13 @@ const Home = () => {
             {/* {!rowPopup && ( */}
             <Accordion
               key={slide.id}
-              expanded={expanded === `panel${slide.id}`}
-              onChange={handleChange(`panel${slide.id}`)}
+              expanded={expanded === `panel${slide?.id}`}
+              onChange={handleChange(`panel${slide?.id}`)}
             >
               <AccordionSummary
                 className="text-base text-opacity-60 font-base text-[#2C2C2C]"
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${slide.id}a-content`}
+                aria-controls={`panel${slide?.id}a-content`}
                 id={`panel${slide.id}a-header`}
               >
                 <Typography>
@@ -433,25 +478,23 @@ const Home = () => {
                       <label className="2xl:[14px] mt-4 font-semibold text-[#1A233899]">
                         Location
                       </label>
-                      {locations.map((location, index) => (
-                        <div key={index}>
-                          <input
-                            id={`id${index}${slide?.id}`}
-                            type="text"
-                            className="text-[12px] border border-1 border-[#0000003B] px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
-                            value={location}
-                            placeholder="Type location here.."
-                            onChange={(e) =>
-                              handleLocation(
-                                `id${index}${slide?.id}`,
-                                e.target.value
-                              )
-                            }
-                          />
-                        </div>
+                      {slide?.Location.map((location, locIndex) => (
+                        <input
+                          key={`${slide.id}-location-${locIndex}`}
+                          type="text"
+                          className="text-[12px] border border-1 border-[#0000003B] px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                          value={location}
+                          placeholder="Type location here.."
+                          onChange={(e) =>
+                            handleLocation(slide.id, locIndex, e.target.value)
+                          }
+                        />
                       ))}
-                      <button onClick={addLocationField}>+ Add Location</button>
+                      <button onClick={() => addLocationField(slide.id)}>
+                        + Add Location
+                      </button>
                     </div>
+
                     <div className="flex flex-row mt-8 space-x-4 ">
                       <div className="flex flex-col">
                         <label className="] 2xl:[14px]  font-semibold text-[#1A233899]">
@@ -500,76 +543,68 @@ const Home = () => {
                       </div>
                     </div>
                   </div>
+
                   <div className="flex flex-col">
-                    <label className=" text-lg font-medium text-[#1A2338B2]">
+                    <label className="text-lg font-medium text-[#1A2338B2]">
                       Key Features and Amenities
                     </label>
                     <div
-                      className="pl-[1rem] flex flex-col space-y-2 rounded-lg  bg-[#FFFFFF] w-[300px] h-[478px]"
+                      className="pl-[1rem] flex flex-col space-y-2 rounded-lg bg-[#FFFFFF] w-[300px] h-[478px]"
                       style={{ border: "2px solid #D9D9D9" }}
                     >
                       <div className="pt-[2rem] ">
-                        {features.map((feature, index) => (
-                          <input
-                            key={index}
-                            type="text"
-                            placeholder="Type features here.."
-                            value={feature}
-                            onChange={(event) =>
-                              handleFeatureChange(index, event, slide.id)
-                            }
-                            className="  border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
-                          />
-                        ))}
-
-                        {/* {features.map((feature, index) => (
+                        {slide.Key.map((feature, index) => (
                           <input
                             key={`${slide.id}-${index}`}
-                            id={`${slide.id}-${index}`}
                             type="text"
-                            placeholder="Type features here.."
+                            placeholder="Type feature here.."
                             value={feature}
                             onChange={(event) =>
-                              handleFeatureChange(slide?.id, index, event)
-                              // handleFeatureChange(index, event, slide?.id)
+                              handleFeatureChange(
+                                slide.id,
+                                index,
+                                event.target.value
+                              )
                             }
                             className="border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
                           />
-                        ))} */}
+                        ))}
                       </div>
                       <div className="flex justify-center">
                         <button
                           className="border border-1 border-[#0000003B] px-2 py-2 w-[270px] h-[56px] rounded"
-                          onClick={addFeature}
+                          onClick={() => addFeature(slide?.id)}
                         >
                           <AiOutlinePlus />
                         </button>
                       </div>
                     </div>
                   </div>
+
                   <div className="flex flex-col">
-                    <p className=" text-lg font-medium text-[#1A2338B2]">
+                    <p className="text-lg font-medium text-[#1A2338B2]">
                       Image
                     </p>
                     <div
-                      className="pl-[1rem] flex flex-col  rounded-lg   bg-[#FFFFFF] w-[300px] h-[478px]"
+                      className="pl-[1rem] flex flex-col rounded-lg bg-[#FFFFFF] w-[300px] h-[478px]"
                       style={{ border: "2px solid #D9D9D9" }}
                     >
-                      <p className="my-2 font-bold   text-xs text-[#1A2338B2] opacity-70 ">
+                      <p className="my-2 font-bold text-xs text-[#1A2338B2] opacity-70">
                         Drag & Drop or Double click to upload image.
                       </p>
                       <div className="flex flex-wrap gap-4">
-                        {imageList?.map((imageSrc, index) => (
-                          <div className="flex flex-col">
+                        {slide?.Photos.map((imageSrc, index) => (
+                          <div
+                            className="flex flex-col relative"
+                            key={`${slide.id}-${index}`}
+                          >
                             <div
-                              key={index}
                               onClick={() =>
                                 document
-                                  .getElementById(`fileInput-${index}`)
+                                  .getElementById(
+                                    `fileInput-${slide.id}-${index}`
+                                  )
                                   .click()
-                              }
-                              onChange={(e) =>
-                                handleImageChange(index, e, slide?.id)
                               }
                               className="flex flex-col justify-center w-16 h-16 p-2 text-center border-2 border-gray-300 border-dashed rounded cursor-pointer"
                               style={{
@@ -580,12 +615,15 @@ const Home = () => {
                                 type="file"
                                 accept="image/*"
                                 className="hidden"
-                                id={`fileInput-${index}`}
+                                id={`fileInput-${slide.id}-${index}`}
+                                onChange={(e) =>
+                                  handleImageChange(index, e, slide.id)
+                                }
                               />
                               {imageSrc ? (
                                 <img
                                   src={imageSrc}
-                                  alt={`uploaded-${index}`}
+                                  alt={`Slide ${slide.id} - Image ${index}`}
                                   className="object-cover w-full h-full rounded"
                                 />
                               ) : (
@@ -595,15 +633,15 @@ const Home = () => {
                             {imageSrc && (
                               <MdCancel
                                 size={24}
-                                className="text-red-500 cursor-pointer"
-                                onClick={() => removeImageBox(index)}
+                                className="text-red-500 cursor-pointer absolute -top-2 -right-2"
+                                onClick={() => removeImageBox(slide.id, index)}
                               />
                             )}
                           </div>
                         ))}
                         <div
                           className="flex w-16 h-16 p-2 text-center border-2 border-gray-300 border-dashed rounded cursor-pointer"
-                          onClick={addImageBox}
+                          onClick={() => addImageBox(slide.id)}
                         >
                           <MdAdd className="flex self-center mx-auto text-gray-500" />
                         </div>
