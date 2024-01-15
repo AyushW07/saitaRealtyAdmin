@@ -51,7 +51,7 @@ const Home = () => {
       Description: "",
       Photos: [],
       Price: "",
-      propertyName: "",
+      PropertyName: propertyData.propertyName,
       Dollar: "",
       Key: [],
       Bedrooms: "",
@@ -75,11 +75,11 @@ const Home = () => {
           prevSlidesData.map((slide) =>
             slide.id === slideId
               ? {
-                ...slide,
-                Photos: slide.Photos.map((photo, photoIndex) =>
-                  photoIndex === index ? reader.result : photo
-                ),
-              }
+                  ...slide,
+                  Photos: slide.Photos.map((photo, photoIndex) =>
+                    photoIndex === index ? reader.result : photo
+                  ),
+                }
               : slide
           )
         );
@@ -103,11 +103,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Photos: slide.Photos.filter(
-              (_, photoIndex) => photoIndex !== index
-            ),
-          }
+              ...slide,
+              Photos: slide.Photos.filter(
+                (_, photoIndex) => photoIndex !== index
+              ),
+            }
           : slide
       )
     );
@@ -130,11 +130,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Key: slide.Key.map((feature, index) =>
-              index === featureIndex ? newValue : feature
-            ),
-          }
+              ...slide,
+              Key: slide.Key.map((feature, index) =>
+                index === featureIndex ? newValue : feature
+              ),
+            }
           : slide
       )
     );
@@ -145,11 +145,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Location: slide.Location.map((loc, index) =>
-              index === locationIndex ? newValue : loc
-            ),
-          }
+              ...slide,
+              Location: slide.Location.map((loc, index) =>
+                index === locationIndex ? newValue : loc
+              ),
+            }
           : slide
       )
     );
@@ -174,7 +174,7 @@ const Home = () => {
         },
       });
 
-      console.log("res", response?.data?.data);
+      console.log("res", response);
       const data = response.data.data;
 
       if (Array.isArray(data) && data.length > 0) {
@@ -390,8 +390,8 @@ const Home = () => {
                 id={`panel${slide.id}a-header`}
               >
                 <Typography>
-                  {slide.Heading && slide.PropertyType
-                    ? `${slide.Heading} - ${slide.PropertyType}`
+                  {slide.PropertyName && slide.PropertyType
+                    ? `${slide.PropertyName} - ${slide.PropertyType}`
                     : `Property ${index + 1}`}
                 </Typography>
                 <span className="ml-auto publish-button-wrapper">
