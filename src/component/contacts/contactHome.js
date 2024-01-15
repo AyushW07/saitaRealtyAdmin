@@ -108,7 +108,7 @@ const Contacthome = () => {
 
   return (
     <>
-      <div className="flex flex-col mt-[2rem] ml-[3rem] ">
+      <div className="flex flex-col mt-[2rem] ml-[12rem] ">
         <h1
           className="my-2 lg:mt-2 font-bold text-3xl  lg:ml-2 text-[#1A2338]"
           style={{ fontFamily: "Raleway, sans-serif" }}
@@ -131,7 +131,7 @@ const Contacthome = () => {
           </span>
         </p>
       </div>
-      <div className="bg-[#F1F5F9] bg-cover ml-6 ">
+      <div className="bg-[#F1F5F9] bg-cover ml-[10rem] ">
         <div className="flex flex-col">
           <div className="flex flex-row">
             <h1
