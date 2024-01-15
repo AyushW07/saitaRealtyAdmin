@@ -77,6 +77,7 @@ const Login = () => {
 
             <div onClick={Loginfunction} className="mt-6 w-[20rem]">
               <button
+                type="button"
                 className="w-full px-4 py-2 font-bold tracking-wide text-black transition-colors duration-200 rounded-md transdiv hover:bg-blue-700 focus:outline-none"
                 style={{
                   borderRadius: "var(--borderRadius, 4px)",

@@ -16,7 +16,7 @@ function App() {
     <>
       <Router>
         <ToastContainer className="!z-[999999]" />
-        <div className="flex w-full bg-[#F1F5F9] ">
+        <div className="flex w-full h-screen bg-[#F1F5F9] ">
           {isLoggedIn && <Navbar />}
           <div className="flex-grow">
             <Routes>

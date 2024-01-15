@@ -75,11 +75,11 @@ const Home = () => {
           prevSlidesData.map((slide) =>
             slide.id === slideId
               ? {
-                  ...slide,
-                  Photos: slide.Photos.map((photo, photoIndex) =>
-                    photoIndex === index ? reader.result : photo
-                  ),
-                }
+                ...slide,
+                Photos: slide.Photos.map((photo, photoIndex) =>
+                  photoIndex === index ? reader.result : photo
+                ),
+              }
               : slide
           )
         );
@@ -103,11 +103,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Photos: slide.Photos.filter(
-                (_, photoIndex) => photoIndex !== index
-              ),
-            }
+            ...slide,
+            Photos: slide.Photos.filter(
+              (_, photoIndex) => photoIndex !== index
+            ),
+          }
           : slide
       )
     );
@@ -130,11 +130,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Key: slide.Key.map((feature, index) =>
-                index === featureIndex ? newValue : feature
-              ),
-            }
+            ...slide,
+            Key: slide.Key.map((feature, index) =>
+              index === featureIndex ? newValue : feature
+            ),
+          }
           : slide
       )
     );
@@ -145,11 +145,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Location: slide.Location.map((loc, index) =>
-                index === locationIndex ? newValue : loc
-              ),
-            }
+            ...slide,
+            Location: slide.Location.map((loc, index) =>
+              index === locationIndex ? newValue : loc
+            ),
+          }
           : slide
       )
     );
@@ -343,7 +343,7 @@ const Home = () => {
 
   return (
     <>
-      <div className="flex flex-col mt-[2rem] ml-2 ">
+      <div className="flex flex-col mt-[2rem] ml-[12rem]">
         <h1
           className="my-2 lg:mt-2 font-bold text-3xl  lg:ml-2 text-[#1A2338]"
           style={{ fontFamily: "Raleway, sans-serif" }}
@@ -364,7 +364,7 @@ const Home = () => {
         </p>
       </div>
 
-      <div className="flex flex-col ">
+      <div className="flex flex-col  mt-[2rem] ml-[12rem]">
         {slidesData.map((slide, index) => (
           <div
             className="flex lg:ml-2 2xl:w-[900px] lg:w-[600px] my-2 rounded-3xl"
@@ -474,7 +474,7 @@ const Home = () => {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col">
                       <label className="2xl:[14px] mt-4 font-semibold text-[#1A233899]">
                         Location
                       </label>
@@ -482,7 +482,7 @@ const Home = () => {
                         <input
                           key={`${slide.id}-location-${locIndex}`}
                           type="text"
-                          className="text-[12px] border border-1 border-[#0000003B] px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                          className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
                           value={location}
                           placeholder="Type location here.."
                           onChange={(e) =>
@@ -549,7 +549,7 @@ const Home = () => {
                       Key Features and Amenities
                     </label>
                     <div
-                      className="pl-[1rem] flex flex-col space-y-2 rounded-lg bg-[#FFFFFF] w-[300px] h-[478px]"
+                      className="flex flex-col space-y-2 rounded-lg bg-[#FFFFFF] w-[300px] h-[478px]"
                       style={{ border: "2px solid #D9D9D9" }}
                     >
                       <div className="pt-[2rem] ">
@@ -623,7 +623,8 @@ const Home = () => {
                               {imageSrc ? (
                                 <img
                                   src={imageSrc}
-                                  alt={`Slide ${slide.id} - Image ${index}`}
+                                  // eslint-disable-next-line
+                                  alt={` ${slide.id} - ${index}`}
                                   className="object-cover w-full h-full rounded"
                                 />
                               ) : (
