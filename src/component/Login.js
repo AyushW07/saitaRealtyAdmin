@@ -40,8 +40,8 @@ const Login = () => {
   return (
     <>
       <ToastContainer position="top-center" />
-      <div className="flex flex-col items-center justify-center min-h-screen overflow-hidden">
-        <div className="w-[40rem] p-20 m-auto bg-[#2E2E2E] rounded-md shadow-xl shadow-gray-200">
+      <div className="flex flex-col items-center justify-center min-h-screen overflow-hidden bg-[#2E2E2E]">
+        <div className="">
           <div className="flex flex-col items-center ">
             <img className="w-[6rem] h-[5rem]" src="/logos.png" alt="i" />
           </div>
