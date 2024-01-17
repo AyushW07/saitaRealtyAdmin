@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import Accordion from "@mui/material/Accordion";
 import Namepopups from "../component/namePopups";
 import { MdAdd, MdCancel } from "react-icons/md";
@@ -324,12 +325,30 @@ const Home = () => {
     setExpanded(newExpanded ? panel : false);
   };
 
-  const handleDeleteAccord = (id) => {
-    const updatedSlidesData = slidesData.filter((slide) => slide.id !== id);
-    setSlidesData(updatedSlidesData);
+  const handleDeleteAccord = async (id) => {
+    console.log("Deleting ID:", id);
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/V1/deleteId/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    if (expanded === `panel${id}`) {
-      setExpanded(null);
+      if (response.status === 200) {
+        const updatedSlidesData = slidesData.filter((slide) => slide.id !== id);
+        setSlidesData(updatedSlidesData);
+
+        if (expanded === `panel${id}`) {
+          setExpanded(null);
+        }
+
+        toast.success("Property deleted successfully");
+      } else {
+        toast.error("Failed to delete the property");
+      }
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      toast.error("An error occurred while deleting the property");
     }
   };
 
@@ -490,7 +509,10 @@ const Home = () => {
                           }
                         />
                       ))}
-                      <button onClick={() => addLocationField(slide.id)}>
+                      <button
+                        className="mr-[10rem]"
+                        onClick={() => addLocationField(slide.id)}
+                      >
                         + Add Location
                       </button>
                     </div>
@@ -595,7 +617,7 @@ const Home = () => {
                       <div className="flex flex-wrap gap-4">
                         {slide?.Photos.map((imageSrc, index) => (
                           <div
-                            className="flex flex-col relative"
+                            className="relative flex flex-col"
                             key={`${slide.id}-${index}`}
                           >
                             <div
@@ -634,7 +656,7 @@ const Home = () => {
                             {imageSrc && (
                               <MdCancel
                                 size={24}
-                                className="text-red-500 cursor-pointer absolute -top-2 -right-2"
+                                className="absolute text-red-500 cursor-pointer -top-2 -right-2"
                                 onClick={() => removeImageBox(slide.id, index)}
                               />
                             )}
