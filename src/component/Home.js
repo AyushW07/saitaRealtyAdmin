@@ -168,12 +168,7 @@ const Home = () => {
 
   const getFeePrograms = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_BASE_URL}/V1/gethomeData`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${API_BASE_URL}/V1/gethomeData`, {});
 
       console.log("res", response);
       const data = response.data.data;
@@ -198,9 +193,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      getFeePrograms();
-    }
+    getFeePrograms();
   }, []);
 
   const handleDescriptionChange = (slideId, value) => {

@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useLoginStore();
+  // const { login } = useLoginStore();
 
   async function Loginfunction() {
     try {
@@ -24,19 +24,19 @@ const Login = () => {
         },
       };
       const response = await axios(config);
-      console.log("res", response);
+      // console.log("res", response);
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
-        toast.success("User created successfully");
-        login();
+        sessionStorage.setItem("token", response.data.token);
+        useLoginStore.getState().login();
+        toast.success("User logged in successfully");
       } else {
         toast.error("Something went wrong");
       }
     } catch (e) {
       console.log("Error:", e);
-      // toast.error(e.response?.data?.message || "An error occurred");
     }
   }
+
   return (
     <>
       <ToastContainer position="top-center" />
