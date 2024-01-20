@@ -40,13 +40,12 @@ const Home = () => {
       Published: false,
     },
   ]);
-  // const [slidesData, setSlidesData] = useState([]);
 
   const handleAddProperty = (propertyData) => {
     const newSlide = {
-      id: slidesData.length + 1, // Ensure this generates a unique ID
-      Heading: propertyData.propertyName, // Slide's name
-      PropertyType: propertyData.propertyType, // Property Type
+      id: slidesData.length + 1,
+      Heading: propertyData.propertyName,
+      PropertyType: propertyData.propertyType,
       Location: [],
       Description: "",
       Photos: [],
@@ -58,7 +57,6 @@ const Home = () => {
       Bathrooms: "",
       Area: "",
       Published: false,
-      // Features: [],
     };
 
     const newSlidesData = [...slidesData, newSlide];
@@ -75,11 +73,11 @@ const Home = () => {
           prevSlidesData.map((slide) =>
             slide.id === slideId
               ? {
-                  ...slide,
-                  Photos: slide.Photos.map((photo, photoIndex) =>
-                    photoIndex === index ? reader.result : photo
-                  ),
-                }
+                ...slide,
+                Photos: slide.Photos.map((photo, photoIndex) =>
+                  photoIndex === index ? reader.result : photo
+                ),
+              }
               : slide
           )
         );
@@ -103,11 +101,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Photos: slide.Photos.filter(
-                (_, photoIndex) => photoIndex !== index
-              ),
-            }
+            ...slide,
+            Photos: slide.Photos.filter(
+              (_, photoIndex) => photoIndex !== index
+            ),
+          }
           : slide
       )
     );
@@ -130,11 +128,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Key: slide.Key.map((feature, index) =>
-                index === featureIndex ? newValue : feature
-              ),
-            }
+            ...slide,
+            Key: slide.Key.map((feature, index) =>
+              index === featureIndex ? newValue : feature
+            ),
+          }
           : slide
       )
     );
@@ -145,11 +143,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Location: slide.Location.map((loc, index) =>
-                index === locationIndex ? newValue : loc
-              ),
-            }
+            ...slide,
+            Location: slide.Location.map((loc, index) =>
+              index === locationIndex ? newValue : loc
+            ),
+          }
           : slide
       )
     );
