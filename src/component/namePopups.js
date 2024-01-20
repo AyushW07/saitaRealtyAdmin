@@ -9,7 +9,7 @@ const Namepopups = ({ open, onClose, onAdd }) => {
   const [propertyName, setPropertyName] = useState("");
   const [propertyType, setPropertyType] = useState("");
 
-  const propertyTypes = ["Residential", "Commercial", "Land", "Other"];
+  const propertyTypes = ["Apartments", "Villas"];
   const handleAdd = () => {
     onAdd({
       propertyName,
