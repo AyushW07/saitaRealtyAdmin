@@ -24,6 +24,7 @@ const Home = () => {
   // const [locations, setLocations] = useState([]);
   // const [imageList, setImageList] = useState([null, null, null]);
   const [expanded, setExpanded] = useState("panel1");
+  const [image, setImage] = useState([""]);
 
   const [slidesData, setSlidesData] = useState([
     {
@@ -65,25 +66,45 @@ const Home = () => {
     setRowPopup(false);
   };
 
-  const handleImageChange = (index, e, slideId) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSlidesData((prevSlidesData) =>
-          prevSlidesData.map((slide) =>
-            slide.id === slideId
-              ? {
-                ...slide,
-                Photos: slide.Photos.map((photo, photoIndex) =>
-                  photoIndex === index ? reader.result : photo
-                ),
-              }
-              : slide
-          )
-        );
-      };
-      reader.readAsDataURL(file);
+  const handleImageChange = async (index, e, slideId) => {
+    const files = e.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const config = {
+          method: "POST",
+          url: `${API_BASE_URL}/V1/upload`,
+          headers: {
+            // 'Content-Type': 'multipart/form-data' not necessary to set this manually
+          },
+          data: formData,
+        };
+        const response = await axios(config);
+        console.log("Server Response: ", response);
+
+        const newImageUrl = response.data.imageUrl; // Make sure this matches your server response
+        if (newImageUrl) {
+          toast.success("Upload image successfully");
+          setImage(newImageUrl); // Update the image state with the new image URL
+
+          setSlidesData((prevSlidesData) =>
+            prevSlidesData.map((slide) =>
+              slide.id === slideId
+                ? { ...slide, Photos: [...slide.Photos, newImageUrl] } // Append the new image URL to the Photos array
+                : slide
+            )
+          );
+        } else {
+          toast.error("Failed to get the image URL from the server response");
+        }
+      } catch (e) {
+        console.error("Error:", e);
+        toast.error("Failed to upload image");
+      }
     }
   };
 
@@ -102,11 +123,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Photos: slide.Photos.filter(
-              (_, photoIndex) => photoIndex !== index
-            ),
-          }
+              ...slide,
+              Photos: slide.Photos.filter(
+                (_, photoIndex) => photoIndex !== index
+              ),
+            }
           : slide
       )
     );
@@ -129,11 +150,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Key: slide.Key.map((feature, index) =>
-              index === featureIndex ? newValue : feature
-            ),
-          }
+              ...slide,
+              Key: slide.Key.map((feature, index) =>
+                index === featureIndex ? newValue : feature
+              ),
+            }
           : slide
       )
     );
@@ -144,25 +165,25 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Location: slide.Location.map((loc, index) =>
-              index === locationIndex ? newValue : loc
-            ),
-          }
+              ...slide,
+              Location: slide.Location.map((loc, index) =>
+                index === locationIndex ? newValue : loc
+              ),
+            }
           : slide
       )
     );
   };
 
-  const addLocationField = (slideId) => {
-    setSlidesData((prevSlidesData) =>
-      prevSlidesData.map((slide) =>
-        slide.id === slideId
-          ? { ...slide, Location: [...slide.Location, ""] }
-          : slide
-      )
-    );
-  };
+  // const addLocationField = (slideId) => {
+  //   setSlidesData((prevSlidesData) =>
+  //     prevSlidesData.map((slide) =>
+  //       slide.id === slideId
+  //         ? { ...slide, Location: [...slide.Location, ""] }
+  //         : slide
+  //     )
+  //   );
+  // };
 
   const getFeePrograms = async () => {
     try {
@@ -241,6 +262,8 @@ const Home = () => {
   };
   const saveFeePrograms = async (slideId) => {
     const slideData = slidesData.find((slide) => slide.id === slideId);
+    slideData["Photos"] = image;
+    console.log("s", slideData);
     try {
       const config = {
         method: "POST",
@@ -489,25 +512,31 @@ const Home = () => {
                         Location
                       </label>
                       {slide?.Location.map((location, locIndex) => (
-                        <input
-                          key={`${slide.id}-location-${locIndex}`}
+                        // <input
+                        //   key={${slide.id}-location-${locIndex}}
+                        //   type="text"
+                        //   className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                        //   value={location}
+                        //   placeholder="Type location here.."
+                        //   onChange={(e) =>
+                        //     handleLocation(slide.id, locIndex, e.target.value)
+                        //   }
+                        // />
+                        <select
                           type="text"
-                          className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
                           value={location}
-                          placeholder="Type location here.."
                           onChange={(e) =>
                             handleLocation(slide.id, locIndex, e.target.value)
                           }
-                        />
+                          placeholder="Type location here.."
+                          className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                        >
+                          <option className="text-[#666]">Location</option>
+                          <option>Dubai</option>
+                          <option>Abu Dhabi</option>
+                        </select>
                       ))}
-                      <button
-                        className="mr-[10rem]"
-                        onClick={() => addLocationField(slide.id)}
-                      >
-                        + Add Location
-                      </button>
                     </div>
-
                     <div className="flex flex-row mt-8 space-x-4 ">
                       <div className="flex flex-col">
                         <label className="] 2xl:[14px]  font-semibold text-[#1A233899]">
@@ -606,7 +635,7 @@ const Home = () => {
                         Drag & Drop or Double click to upload image.
                       </p>
                       <div className="flex flex-wrap gap-4">
-                        {slide?.Photos.map((imageSrc, index) => (
+                        {slide?.Photos?.map((imageSrc, index) => (
                           <div
                             className="relative flex flex-col"
                             key={`${slide.id}-${index}`}
