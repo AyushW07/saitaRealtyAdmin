@@ -24,7 +24,7 @@ const Home = () => {
   // const [locations, setLocations] = useState([]);
   // const [imageList, setImageList] = useState([null, null, null]);
   const [expanded, setExpanded] = useState("panel1");
-  const [image, setImage] = useState([""]);
+  // const [image, setImage] = useState([""]);
 
   const [slidesData, setSlidesData] = useState([
     {
@@ -66,45 +66,46 @@ const Home = () => {
     setRowPopup(false);
   };
 
-  const handleImageChange = async (index, e, slideId) => {
-    const files = e.target.files;
-    if (files.length > 0) {
-      const file = files[0];
+  const handleImageChange = async (index, event, slideId) => {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file); // The 'image' key should match the expected key in your API endpoint
 
-      const formData = new FormData();
-      formData.append("file", file);
+    try {
+      const config = {
+        method: "POST",
+        url: `${API_BASE_URL}/V1/upload`,
+        headers: {},
+        data: formData,
+      };
 
-      try {
-        const config = {
-          method: "POST",
-          url: `${API_BASE_URL}/V1/upload`,
-          headers: {
-            // 'Content-Type': 'multipart/form-data' not necessary to set this manually
-          },
-          data: formData,
-        };
-        const response = await axios(config);
-        console.log("Server Response: ", response);
+      const response = await axios(config);
+      console.log("Server Response: ", response);
 
-        const newImageUrl = response.data.imageUrl; // Make sure this matches your server response
-        if (newImageUrl) {
-          toast.success("Upload image successfully");
-          setImage(newImageUrl); // Update the image state with the new image URL
+      const newImageUrl = response.data.imageUrl; // Make sure this matches the key in your server response
+      console.log(newImageUrl);
 
-          setSlidesData((prevSlidesData) =>
-            prevSlidesData.map((slide) =>
-              slide.id === slideId
-                ? { ...slide, Photos: [...slide.Photos, newImageUrl] } // Append the new image URL to the Photos array
-                : slide
-            )
-          );
-        } else {
-          toast.error("Failed to get the image URL from the server response");
-        }
-      } catch (e) {
-        console.error("Error:", e);
-        toast.error("Failed to upload image");
+      if (newImageUrl) {
+        toast.success("Upload image successfully");
+
+        setSlidesData((prevSlidesData) =>
+          prevSlidesData.map((slide) =>
+            slide.id === slideId
+              ? {
+                  ...slide,
+                  Photos: slide.Photos.map((photo, photoIndex) =>
+                    photoIndex === index ? newImageUrl : photo
+                  ),
+                }
+              : slide
+          )
+        );
+      } else {
+        toast.error("Failed to get the image URL from the server response");
       }
+    } catch (e) {
+      console.error("Error:", e);
+      toast.error("Failed to upload image");
     }
   };
 
@@ -117,17 +118,19 @@ const Home = () => {
       )
     );
   };
-
+  useEffect(() => {
+    console.log("sl", slidesData);
+  }, [slidesData]);
   const removeImageBox = (slideId, index) => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Photos: slide.Photos.filter(
-              (_, photoIndex) => photoIndex !== index
-            ),
-          }
+              ...slide,
+              Photos: slide.Photos.filter(
+                (_, photoIndex) => photoIndex !== index
+              ),
+            }
           : slide
       )
     );
@@ -150,11 +153,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Key: slide.Key.map((feature, index) =>
-              index === featureIndex ? newValue : feature
-            ),
-          }
+              ...slide,
+              Key: slide.Key.map((feature, index) =>
+                index === featureIndex ? newValue : feature
+              ),
+            }
           : slide
       )
     );
@@ -165,9 +168,9 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-            ...slide,
-            Location: newValue,
-          }
+              ...slide,
+              Location: newValue,
+            }
           : slide
       )
     );
@@ -260,8 +263,8 @@ const Home = () => {
   };
   const saveFeePrograms = async (slideId) => {
     const slideData = slidesData.find((slide) => slide.id === slideId);
-    slideData["Photos"] = image;
-    console.log("s", slideData);
+    // slideData["Photos"] = image;
+    // console.log("s", slideData);
     try {
       const config = {
         method: "POST",
@@ -523,7 +526,6 @@ const Home = () => {
                         <option value="Dubai">Dubai</option>
                         <option value="Abu Dhabi">Abu Dhabi</option>
                       </select>
-
                     </div>
                     <div className="flex flex-row mt-8 space-x-4 ">
                       <div className="flex flex-col">
