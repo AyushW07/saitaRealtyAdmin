@@ -29,7 +29,7 @@ const Home = () => {
   const [slidesData, setSlidesData] = useState([
     {
       id: "",
-      Location: [],
+      Location: "",
       Description: "",
       Photos: [],
       Price: "",
@@ -48,7 +48,7 @@ const Home = () => {
       id: slidesData.length + 1,
       Heading: propertyData.propertyName,
       PropertyType: propertyData.propertyType,
-      Location: [],
+      Location: "",
       Description: "",
       Photos: [],
       Price: "",
@@ -123,11 +123,11 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Photos: slide.Photos.filter(
-                (_, photoIndex) => photoIndex !== index
-              ),
-            }
+            ...slide,
+            Photos: slide.Photos.filter(
+              (_, photoIndex) => photoIndex !== index
+            ),
+          }
           : slide
       )
     );
@@ -150,26 +150,24 @@ const Home = () => {
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Key: slide.Key.map((feature, index) =>
-                index === featureIndex ? newValue : feature
-              ),
-            }
+            ...slide,
+            Key: slide.Key.map((feature, index) =>
+              index === featureIndex ? newValue : feature
+            ),
+          }
           : slide
       )
     );
   };
 
-  const handleLocation = (slideId, locationIndex, newValue) => {
+  const handleLocation = (slideId, newValue) => {
     setSlidesData((prevSlidesData) =>
       prevSlidesData.map((slide) =>
         slide.id === slideId
           ? {
-              ...slide,
-              Location: slide.Location.map((loc, index) =>
-                index === locationIndex ? newValue : loc
-              ),
-            }
+            ...slide,
+            Location: newValue,
+          }
           : slide
       )
     );
@@ -511,31 +509,21 @@ const Home = () => {
                       <label className="2xl:[14px] mt-4 font-semibold text-[#1A233899]">
                         Location
                       </label>
-                      {slide?.Location.map((location, locIndex) => (
-                        // <input
-                        //   key={${slide.id}-location-${locIndex}}
-                        //   type="text"
-                        //   className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
-                        //   value={location}
-                        //   placeholder="Type location here.."
-                        //   onChange={(e) =>
-                        //     handleLocation(slide.id, locIndex, e.target.value)
-                        //   }
-                        // />
-                        <select
-                          type="text"
-                          value={location}
-                          onChange={(e) =>
-                            handleLocation(slide.id, locIndex, e.target.value)
-                          }
-                          placeholder="Type location here.."
-                          className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
-                        >
-                          <option className="text-[#666]">Location</option>
-                          <option>Dubai</option>
-                          <option>Abu Dhabi</option>
-                        </select>
-                      ))}
+
+                      <select
+                        type="text"
+                        value={slide.Location}
+                        onChange={(e) =>
+                          handleLocation(slide.id, e.target.value)
+                        }
+                        placeholder="Type location here.."
+                        className="text-[12px] border border-1 border-[#0000003B] mt-3 px-2 py-2 2xl:w-[344px] 2xl:h-[56px] lg:w-[256px] lg:h-[40px] rounded"
+                      >
+                        <option className="text-[#666]">Location</option>
+                        <option value="Dubai">Dubai</option>
+                        <option value="Abu Dhabi">Abu Dhabi</option>
+                      </select>
+
                     </div>
                     <div className="flex flex-row mt-8 space-x-4 ">
                       <div className="flex flex-col">
